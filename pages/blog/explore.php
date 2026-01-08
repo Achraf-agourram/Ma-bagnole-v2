@@ -4,10 +4,11 @@ require_once __DIR__ . '/../../autoload.php';
 if(!isset($_SESSION['loggedAccount'])) exit;
 
 if(isset($_POST['addArticle'])) {
-  $tags = explode(" ", str_replace("#", "", $_POST['tags']));
-  foreach($tags as $tag) {
-    if(!Tag::existTag($tag)) Tag::addTag($tag);
+  if($_POST['tags']) {
+    $tags = explode(" ", str_replace("#", "", $_POST['tags']));
+    foreach($tags as $tag) if(!Tag::existTag($tag)) Tag::addTag($tag);
   }
+  else $tags = null;
 
   if(Article::addArticle($_POST['title'], $_FILES['image']['name'], $tags, $_POST['paragraph'], $_POST['theme'], $_SESSION['loggedAccount'])) echo "Article added successfully";
   else echo "Adding article failed, please try again";

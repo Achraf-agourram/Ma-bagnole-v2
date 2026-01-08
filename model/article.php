@@ -11,7 +11,7 @@ class Article
     private $idTheme;
     private $idClient;
 
-    public function __construct(int $id, string $title, string $image, array $tags, string $paragraph, int $approuve, int $idTheme, int $idClient)
+    public function __construct(int $id, string $title, string $image, ?array $tags, string $paragraph, int $approuve, int $idTheme, int $idClient)
     {
         $this->articleId = $id;
         $this->articleTitle = $title;
@@ -23,15 +23,17 @@ class Article
         $this->idClient = $idClient;
     }
 
-    public static function addArticle(string $title, ?string $image, array $tags, string $paragraph, int $idTheme, int $idClient): bool
+    public static function addArticle(string $title, string $image, ?array $tags, string $paragraph, int $idTheme, int $idClient): bool
     {
         try{
+            if($image) move_uploaded_file($_FILES['image']['tmp_name'], "images/" . $image);
+            else $image = "unavailable.png";
+
             Database::request("INSERT INTO articles (articleTitle, articleImage, articleParagraph, approuve, idTheme, idClient) VALUES (?, ?, ?, ?, ?, ?);", [$title, $image, $paragraph, 0, $idTheme, $idClient]);
             $articleId = Database::getLastArticle();
 
-            foreach($tags as $tag) Database::request("INSERT INTO article_tag (article_id, tag_id) VALUES (?, ?)", [$articleId, Tag::getTagId($tag)]);
+            if($tags) foreach($tags as $tag) Database::request("INSERT INTO article_tag (article_id, tag_id) VALUES (?, ?)", [$articleId, Tag::getTagId($tag)]);
             
-            if($image) move_uploaded_file($_FILES['image']['tmp_name'], "images/" . $image);
             return true;
 
         }catch (Exception $e) {return false;}
