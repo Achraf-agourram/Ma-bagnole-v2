@@ -13,6 +13,9 @@ if(isset($_POST['addArticle'])) {
   if(Article::addArticle($_POST['title'], $_FILES['image']['name'], $tags, $_POST['paragraph'], $_POST['theme'], $_SESSION['loggedAccount'])) echo "Article added successfully";
   else echo "Adding article failed, please try again";
 }
+
+if(isset($_GET['getArticlesOnTopic'])) $articles = Article::getArticlesOnTheme($_GET['getArticlesOnTopic']);  
+else $articles = Article::getAllArticles();
 ?>
 
 
@@ -46,17 +49,17 @@ if(isset($_POST['addArticle'])) {
   </header>
 
   <section class="container mx-auto px-4 py-8">
-    <div class="flex flex-wrap gap-3 justify-center mb-10">
+    <form class="flex flex-wrap gap-3 justify-center mb-10" method="GET">
       <button class="px-4 py-2 bg-[#197fe6] text-white rounded-full">All Topics</button>
-      <button class="px-4 py-2 border border-[#197fe6] text-[#197fe6] rounded-full hover:bg-blue-50">Travel</button>
-      <button class="px-4 py-2 border border-[#197fe6] text-[#197fe6] rounded-full hover:bg-blue-50">Technology</button>
-      <button class="px-4 py-2 border border-[#197fe6] text-[#197fe6] rounded-full hover:bg-blue-50">Lifestyle</button>
-      <button class="px-4 py-2 border border-[#197fe6] text-[#197fe6] rounded-full hover:bg-blue-50">Cooking</button>
-    </div>
-    
-    <div class='grid md:grid-cols-3 gap-8'>
       <?php
-        foreach(Article::getAllArticles() as $article) {
+        foreach(Theme::getThemes() as $topic) echo "<button name='getArticlesOnTopic' value='{$topic->themeId}' class='px-4 py-2 border border-[#197fe6] text-[#197fe6] rounded-full hover:bg-blue-50'>{$topic->themeTitle}</button>";
+      ?>
+      
+    </form>
+    
+    <form class="grid md:grid-cols-3 gap-8" method="GET">
+      <?php
+        foreach($articles as $article) {
           echo "
             <div class='bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition'>
               <div class='h-48 bg-gray-200 flex items-center justify-center text-gray-400 font-bold uppercase tracking-widest'><img src='images/{$article->articleImage}'></div> 
@@ -75,15 +78,16 @@ if(isset($_POST['addArticle'])) {
             ";
           echo "
                 </div>
+                <button name='showArticle' value='{$article->articleId}' class='mt-2 px-4 py-2 bg-[#197fe6] text-white rounded-full'>learn more</button>
               </div>
             </div>
           ";
         }
           ?>
                 
-    </div>
+      </form>
 
-    <div class="flex flex-col md:flex-row justify-between items-center mt-12 gap-6 border-t pt-8">
+    <!--div class="flex flex-col md:flex-row justify-between items-center mt-12 gap-6 border-t pt-8">
       <div class="flex items-center gap-3">
         <span class="text-sm text-gray-600">Show:</span>
         <select class="border p-2 rounded text-sm outline-[#197fe6]">
@@ -97,7 +101,7 @@ if(isset($_POST['addArticle'])) {
         <button class="px-4 py-2 bg-[#197fe6] text-white rounded font-bold">1</button>
         <button class="px-4 py-2 border rounded hover:bg-gray-100">Next</button>
       </div>
-    </div>
+    </div-->
   </section>
 
   <div id="article-modal" class="absolute hidden flex inset-0 bg-gray-600 bg-opacity-75 items-center justify-center z-50">

@@ -47,6 +47,18 @@ class Tag
         return Database::request("SELECT tagId FROM tags WHERE tagTitle= ?;", [$tag])[0]->tagId;
     }
 
+    public static function linkTagsWithArticles(array $articles)
+    {
+        $result = [];
+
+        foreach($articles as $article)
+        {
+            $articleTags = Tag::getTagsByArticle($article->articleId);
+            array_push($result, new Article($article->articleId, $article->articleTitle, $article->articleImage, $articleTags, $article->articleParagraph, $article->approuve, $article->idTheme, $article->idClient));
+        }
+        return $result;
+    }
+
     public function __get($property)
     {
         return $this->$property;

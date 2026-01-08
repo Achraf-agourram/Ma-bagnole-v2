@@ -65,23 +65,18 @@ class Article
     public static function getAllArticles(): bool|array
     {
         try{
-            $allArticles = [];
-            $articles = Database::request("SELECT articles.*, themes.themeTitle FROM articles JOIN themes ON idTheme=themes.themeId;", []);
-
-            foreach($articles as $article)
-            {
-                $articleTags = Tag::getTagsByArticle($article->articleId);
-                array_push($allArticles, new Article($article->articleId, $article->articleTitle, $article->articleImage, $articleTags, $article->articleParagraph, $article->approuve, $article->idTheme, $article->idClient));
-            }
-            return $allArticles;
+            $articles = Database::request("SELECT articles.*, themes.themeTitle FROM articles JOIN themes ON idTheme=themes.themeId WHERE approuve= 1;", []);
+            return Tag::linkTagsWithArticles($articles);
 
         }catch (Exception $e) {return false;}
     }
 
     public static function getArticlesOnTheme(int $idTheme): bool|array
     {
-        try{ 
-            return Database::request("SELECT * FROM articles WHERE idTheme= ?;", [$idTheme]);
+        try{
+            $articles = Database::request("SELECT articles.*, themes.themeTitle FROM articles JOIN themes ON idTheme=themes.themeId WHERE idTheme= ?;", [$idTheme]);
+            return Tag::linkTagsWithArticles($articles);
+
         }catch (Exception $e) {return false;}
     }
 
