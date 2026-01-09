@@ -1,19 +1,16 @@
 <?php 
-$articleToEdit = Article::getArticleById($_GET['edit']);
 
 if(isset($_POST['editArticle'])) {
-    if($connectedUser->id === $articleToEdit->idClient) {
-        if($_POST['tags']) {
-            $tags = explode(" ", str_replace("#", "", $_POST['tags']));
-            foreach($tags as $tag) if(!Tag::existTag($tag)) Tag::addTag($tag);
-        }
-        else $tags = null;
-
-        if($articleToEdit->editArticle($_POST['title'], $tags, $_FILES['image']['name'], $_POST['paragraph'])) {
-            header("location: explore.php");
-            exit;
-        }else echo "something went wrong";
+    if($_POST['tags']) {
+        $tags = explode(" ", str_replace("#", "", $_POST['tags']));
+        foreach($tags as $tag) if(!Tag::existTag($tag)) Tag::addTag($tag);
     }
+    else $tags = null;
+
+    if($articleToEdit->editArticle($_POST['title'], $tags, $_FILES['image']['name'], $_POST['paragraph'])) {
+        header("location: explore.php");
+        exit;
+    }else echo "something went wrong";
     
 }
 ?>

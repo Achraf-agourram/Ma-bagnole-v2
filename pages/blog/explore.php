@@ -40,7 +40,18 @@ if(isset($_POST['addArticle'])) {
 
   <?php
     if(isset($_GET['showArticle'])) return require_once "sections/viewArticleSection.php";
-    if(isset($_GET['edit'])) return require_once "sections/editingArticleSection.php";
+
+    if(isset($_GET['edit'])) {
+      $articleToEdit = Article::getArticleById($_GET['edit']);
+      if($connectedUser->id === $articleToEdit->idClient) return require_once "sections/editingArticleSection.php";
+    }
+
+    if(isset($_GET['deleteArticle'])) {
+      $articleToDelete = Article::getArticleById($_GET['deleteArticle']);
+      $articleToDelete->removeArticle();
+      header("location: explore.php");
+      exit;
+    }
     
     require_once "sections/allArticlesSection.php";
   ?>
