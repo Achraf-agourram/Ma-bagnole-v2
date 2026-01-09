@@ -43,7 +43,19 @@
             ";
           echo "
                 </div>
-                <button name='showArticle' value='{$article->articleId}' class='mt-2 px-4 py-2 bg-[#197fe6] text-white rounded-full'>learn more</button>
+                <div class='mt-2 flex justify-between'>
+                  <button name='showArticle' value='{$article->articleId}' class='px-4 py-2 bg-[#197fe6] text-white rounded-full'>learn more</button>
+                ";
+
+          if($article->idClient == $connectedUser->id) echo "
+            <div class='flex'>
+              <button class='text-[#197fe6] p-4'>Edit</button>
+              <button class='text-red-500 pl-3'>delete</button>
+            </div>
+          ";
+
+          echo "
+                </div>
               </div>
             </div>
           ";
